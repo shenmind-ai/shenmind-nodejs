@@ -1,25 +1,26 @@
-## ShenMind AI Node.js Client
+## 深迈 API 的 nodejs 客户端
 
 
-### Introduction
-This project is a Node.js client for the ShenMind AI API, aiming to provide users with a convenient way to access the ShenMind API, explore and utilize AI models, and develop their own applications.
+### 简介
+本项目是深迈 API 的 nodejs 客户端，以让用户更加方便地使用深迈API，更好地探索和使用AI模型，以及开发自己的应用产品。
 
 
-### Installation
-You can install the package directly via npm:
+### 安装
+您可以直接通过 npm 安装：
 ```
 npm install shenmind
 ```
 
-### Usage Examples
+### 使用样例
 
-#### 1. Set Personal API Token
-You can retrieve your personal API token from the User [Dashboard](https://mmdatong.com/dashboard?dashboardTab=userinfo) and configure it as follows:
+#### 1. 设置个人 Api Token
+
+您可以在[个人中心](https://mmdatong.com/dashboard?dashboardTab=userinfo) 查看自己的 Api Token，并进行配置。
 ```
  export SHENMIND_API_TOKEN=xxxxxxxxxxxxxxxxxxxx
 ```
 
-#### 2. Create Prediction
+#### 2. 创建预测
 ```nodejs
 const shenmind = require('shenmind');
 
@@ -41,7 +42,7 @@ main();
 ```
 
 
-#### 3. Query Prediction Output
+#### 3. 查询预测结果
 
 
 ```nodejs
