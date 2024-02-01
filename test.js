@@ -1,27 +1,21 @@
-const shenmind = require('./shenmind');
+const shenmind = require('shenmind');
 
-
-modelId = 'yP1jM07UrYuQ6xHZ-lqYSQ==';
-
-files = {
+async function main() {
+  const modelId = 'yP1jM07UrYuQ6xHZ-lqYSQ==';
+  const files = {
     'image_path': 'test.png'
-};
-params = {
+  };
+  const params = {
     'prompt': 'the product is for sale'
-}; 
+  };
 
-// prediction =  shenmind.run(
-//     modelId, 
-//     files, 
-//     params,
-//     waitResult = true
-// );
+//   const prediction = await shenmind.run(modelId, files, params, waitResult = true);
+//   console.log(prediction);
 
-// console.log(prediction);
+  const predictionId = 'HkzotuoaEy3rcsCLK8WRyQ==';
+  const predictionOutput = await shenmind.getPredictionOutput(predictionId);
+  console.log(predictionOutput);
+}
 
-
-predictionId = 'HkzotuoaEy3rcsCLK8WRyQ==';
-shenmind.getPredictionOutput(predictionId).then((prediction) => {
-    console.log(prediction);
-});
-
+// 调用 main 函数
+main();
