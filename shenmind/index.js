@@ -43,14 +43,14 @@ async function run(modelId, files, params, waitResult = false) {
   const apiToken = process.env.SHENMIND_API_TOKEN;
   const headers = {
     'Authorization': apiToken,
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/json'
   };
 
   data.modelId = modelId;
   Object.assign(data, params);
 
-  const response = await axios.post(createPredictionUrl, new URLSearchParams(data).toString(), { headers });
-
+  const response = await axios.post(createPredictionUrl, data, { headers });
+  
   if (response.status === 200) {
     if (!waitResult) {
       return response.data.data.predictionId;
@@ -87,7 +87,27 @@ async function getPredictionOutput(predictionId) {
   }
 }
 
+async function cancelPrediction(predictionId) {
+  const apiToken = process.env.SHENMIND_API_TOKEN;
+  const headers = {
+    'Authorization': apiToken
+  };
+  const data = {
+    predictionId
+  };
+  const response = await axios.post(cancelPredictionUrl, data, { headers });
+  
+  if (response.status === 200) {
+    return response.data.data;
+  } else {
+    throw new Error(`Fail to cancel prediction: ${response.data}`);
+  }
+}
+
 module.exports = {
   run,
-  getPredictionOutput
+  getPredictionOutput,
+  cancelPrediction
 };
+
+
