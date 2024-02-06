@@ -35,8 +35,12 @@ async function uploadFile(filePath) {
 async function run(modelId, files, params, waitResult = false) {
   const data = {};
   for (const [key, filePath] of Object.entries(files)) {
-    const storageId = await uploadFile(filePath);
-    data[key] = storageId[0];
+    if (filePath.startsWith('http')) {
+      data[key] = filePath;
+    } else {
+      const storageId = await uploadFile(filePath);
+      data[key] = storageId[0];
+    }
   }
   
   // run

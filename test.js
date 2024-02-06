@@ -1,15 +1,13 @@
 const shenmind = require('./shenmind');
 
 async function main() {
-  const modelId = "qz3s9jxgHMIRcw8L_DCYVg==";
+  const modelId = 'yP1jM07UrYuQ6xHZ-lqYSQ=='
   const files = {
-    "audio": "test.wav"
+    'image_path': 'https://mmdatong.com/api/public/storage/getFile?filepath=c8wt7SutURuK92d1GrNq5w%3D%3D%2Fth_e3ghz0E3PwJQHKAFGEg%3D%3D%2F1706696941478847286%2Fbottle.jpg'
   };
   const params = {
-    "language": null,
-    "translate": false,
+    'prompt': "bottle on table for Christmas"
   };
-
 
   const prediction = await shenmind.run(modelId, files, params, waitResult = true);
   console.log(prediction);
