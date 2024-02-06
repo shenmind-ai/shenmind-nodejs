@@ -58,3 +58,15 @@ main();
 
 ````
 
+#### 4. 取消预测
+```
+const shenmind = require('shenmind');
+
+async function main() {
+  const predictionId = 'HkzotuoaEy3rcsCLK8WRyQ==';
+  const predictionOutput = await shenmind.cancelPrediction(predictionId);
+  console.log(predictionOutput);
+}
+
+main();
+```
