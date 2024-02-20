@@ -62,7 +62,7 @@ async function run(modelId, files, params, waitResult = false) {
       const predictionId = response.data.data.predictionId;
       while (true) {
         const prediction = await getPredictionOutput(predictionId);
-        if (prediction.status === 'succeeded') {
+        if (prediction.status === 'succeeded' || prediction.status === 'failed' || prediction.status === 'canceled') {
           return prediction;
         } else {
           await new Promise(resolve => setTimeout(resolve, 1000));
