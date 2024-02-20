@@ -1,6 +1,6 @@
 {
   "name": "shenmind",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "nodejs client for shenmind api",
   "main": "index.js",
   "scripts": {
