@@ -1,0 +1,23 @@
+{
+  "name": "shenmind",
+  "version": "2.0.0",
+  "description": "nodejs for shenmind api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shenmind-ai/shenmind-nodejs.git"
+  },
+  "keywords": [
+    "ShenMind",
+    "AI"
+  ],
+  "author": "sdruc0611@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shenmind-ai/shenmind-nodejs/issues"
+  },
+  "homepage": "https://github.com/shenmind-ai/shenmind-nodejs#readme"
+}
