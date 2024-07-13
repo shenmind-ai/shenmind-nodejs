@@ -1,20 +1,24 @@
 const shenmind = require('./shenmind');
 
 async function main() {
-  const modelId = 'yP1jM07UrYuQ6xHZ-lqYSQ=='
-  const files = {
-    'image_path': 'https://mmdatong.com/api/public/storage/getFile?filepath=c8wt7SutURuK92d1GrNq5w%3D%3D%2Fth_e3ghz0E3PwJQHKAFGEg%3D%3D%2F1706696941478847286%2Fbottle.jpg'
-  };
-  const params = {
-    'prompt': "bottle on table for Christmas"
-  };
 
-  const prediction = await shenmind.run(modelId, files, params, waitResult = true);
-  console.log(prediction);
+    const modelId = "dqumfm4yl258";
+    const files = {
+        image: 'https://oss.shenmind.com/c8wt7SutURuK92d1GrNq5w==/th_e3ghz0E3PwJQHKAFGEg==/1709886162958054120/1.png',
+    };
+    const params = {
+        negative_prompt: ' ',
+        style: '3D',
+        prompt: 'a person'};
 
-  //const predictionId = 'HkzotuoaEy3rcsCLK8WRyQ==';
-  //const predictionOutput = await shenmind.getPredictionOutput(predictionId);
-  //console.log(predictionOutput);
+    const prediction = await shenmind.run(modelId, files, params, waitResult = false);
+    console.log(prediction);
+    const output = await shenmind.getPredictionOutput(prediction);
+    console.log(output);
+    const canceled = await shenmind.cancelPrediction(prediction);
+    console.log(canceled);
+
+ 
 }
 
 // 调用 main 函数

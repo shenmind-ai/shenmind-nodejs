@@ -1,68 +1,103 @@
 const {
-    uploadUrl,
+    permissionUrl,
     createPredictionUrl,
     queryPredictionUrl,
     cancelPredictionUrl
 } = require('./constant');
+
+require('dotenv').config();
 
 const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 
 
-async function uploadFile(filePath) {
-  // upload local file to server
-  const file = fs.createReadStream(filePath);
-  const formData = new FormData();
-  formData.append('file', file);
+async function getUploadPermission() {
+    const apiToken = process.env.SHENMIND_API_TOKEN;
+    if (!apiToken) {
+        throw new Error("API token not available in environment variables.");
+    }
 
-  const apiToken = process.env.SHENMIND_API_TOKEN;
-  const headers = {
-    'Authorization': apiToken,
-    ...formData.getHeaders()
-  };
+    const headers = {
+        'Authorization': `Bearer ${apiToken}`
+    };
 
-
-  const response = await axios.post(uploadUrl, formData, { headers });
-  
-  if (response.status === 200) {
-    return response.data.data; // storage id
-  } else {
-    throw new Error(`Fail to upload file: ${response.data}`);
-  }
+    try {
+        const response = await axios.get(permissionUrl, { headers });
+        if (response.status === 200) {
+            if(response.data && response.data.data && response.data.data.permission) {
+                return response.data.data.permission;
+            } else {
+                throw new Error("Unexpected response format: " + JSON.stringify(response.data));
+            }
+        } else {
+            throw new Error("Failed to get upload permission: " + response.statusText);
+        }
+    } catch (error) {
+        throw new Error(`Network-related error occurred: ${error.message}`);
+    }
 }
 
-async function run(modelId, files, params, waitResult = false) {
+async function uploadFile(filePath) {
+    const permission = await getUploadPermission();
+
+    const url = permission.host;
+    const key = permission.directory + filePath.split('/').pop();
+    const formData = new FormData();
+    formData.append('key', key);
+    formData.append('policy', permission.policy);
+    formData.append('OSSAccessKeyId', permission.ossAccessKeyId);
+    formData.append('signature', permission.signature);
+    formData.append('callback', permission.callback);
+    formData.append('file', fs.createReadStream(filePath), { filename: filePath.split('/').pop() });
+
+    try {
+        const response = await axios.post(url, formData, { headers: formData.getHeaders() });
+        if (response.status === 200) {
+            return permission.fileID;
+        } else {
+            throw new Error(`Failed to upload file: ${response.statusText}`);
+        }
+    } catch (error) {
+            throw new Error(`Error uploading file: ${error.message}`);
+    }
+}
+
+
+async function run(modelID, files, params, waitResult = false) {
   const data = {};
   for (const [key, filePath] of Object.entries(files)) {
     if (filePath.startsWith('http')) {
       data[key] = filePath;
     } else {
       const storageId = await uploadFile(filePath);
-      data[key] = storageId[0];
+      data[key] = storageId;
     }
   }
   
   // run
   const apiToken = process.env.SHENMIND_API_TOKEN;
+
+
   const headers = {
-    'Authorization': apiToken,
+    'Authorization': `Bearer ${apiToken}`,
     'Content-Type': 'application/json'
   };
 
-  data.modelId = modelId;
+  data.modelID = modelID;
   Object.assign(data, params);
 
   const response = await axios.post(createPredictionUrl, data, { headers });
   
   if (response.status === 200) {
     if (!waitResult) {
-      return response.data.data.predictionId;
+      return response.data.data.predictionID;
     } else {
-      const predictionId = response.data.data.predictionId;
+      const predictionID = response.data.data.predictionID;
       while (true) {
-        const prediction = await getPredictionOutput(predictionId);
+        const prediction = await getPredictionOutput(predictionID);
         if (prediction.status === 'succeeded' || prediction.status === 'failed' || prediction.status === 'canceled') {
+          prediction.predictionID = predictionID;
           return prediction;
         } else {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -74,13 +109,13 @@ async function run(modelId, files, params, waitResult = false) {
   }
 }
 
-async function getPredictionOutput(predictionId) {
+async function getPredictionOutput(predictionID) {
   const apiToken = process.env.SHENMIND_API_TOKEN;
   const headers = {
-    'Authorization': apiToken
+    'Authorization': `Bearer ${apiToken}`,
   };
   const params = {
-    predictionId
+    predictionID
   };
   const response = await axios.get(queryPredictionUrl, { headers, params });
 
@@ -91,18 +126,18 @@ async function getPredictionOutput(predictionId) {
   }
 }
 
-async function cancelPrediction(predictionId) {
+async function cancelPrediction(predictionID) {
   const apiToken = process.env.SHENMIND_API_TOKEN;
   const headers = {
-    'Authorization': apiToken
+    'Authorization': `Bearer ${apiToken}`,
   };
   const data = {
-    predictionId
+    predictionID
   };
   const response = await axios.post(cancelPredictionUrl, data, { headers });
   
   if (response.status === 200) {
-    return response.data.data;
+    return true;
   } else {
     throw new Error(`Fail to cancel prediction: ${response.data}`);
   }

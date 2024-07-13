@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "shenmind": "^1.0.2"
+    "dotenv": "^16.4.5",
+    "shenmind": "^2.0.0"
   }
 }
